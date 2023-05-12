@@ -1,47 +1,53 @@
-import React, { useState } from 'react';
-import EmptyList from '../../components/common/EmptyList';
-import BlogList from '../../components/Home/BlogList';
-import Header from '../../components/Home/Header';
-import { blogList } from '../../config/data';
-import Footer from '../../containers/Footer';
-import { Pagination } from '@mui/material';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+
+import EmptyList from "../../components/common/EmptyList";
+import BlogList from "../../components/Home/BlogList";
+import Header from "../../components/Home/Header";
+import Footer from "../../containers/Footer";
+import { Pagination } from "@mui/material";
 
 const Home = () => {
-  const [blogs, setBlogs] = useState(blogList);
+  const [blogs, setBlogs] = useState([]);
   const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(0);
+  const [search, setSearch] = useState("");
 
-  const postsPerPage = 9;
-  const totalPosts = blogs.length;
-  const totalPages = Math.ceil(totalPosts / postsPerPage);
-  const startIndex = (page - 1) * postsPerPage;
-  const endIndex = startIndex + postsPerPage;
-  const displayedPosts = blogs.slice(startIndex, endIndex);
+  useEffect(() => {
+    axios.get(`/api/blogs?page=${page}&search=${search}`).then(({ data }) => {
+      setBlogs(data.blogs);
+      setTotalPages(data.total_page);
+    });
+  }, [page, search]);
 
   const handlePageChange = (event, value) => {
-    setPage(value)}
+    setPage(value);
+  };
 
-  function handleBlogChange(blogs){
-    setBlogs(blogs)}
+  function handleBlogChange(blogs) {
+    setBlogs(blogs);
+  }
 
   return (
     <div>
       {/* Page Header */}
-      <Header onBlogChange={handleBlogChange} />
+      <Header onBlogChange={handleBlogChange} onSetSearch={setSearch} />
 
       {/* Blog List & Empty View */}
-      {!blogs.length ? <EmptyList /> : <BlogList blogs={displayedPosts} />}
+      {!blogs.length ? <EmptyList /> : <BlogList blogs={blogs} />}
 
       {/* Pagination */}
-      <div sx={{ display: 'flex', justifyContent: 'center' }}>
-        <Pagination 
-          count={totalPages} 
-          page={page} 
+      <div sx={{ display: "flex", justifyContent: "center" }}>
+        <Pagination
+          count={totalPages}
+          page={page}
           onChange={handlePageChange}
           size="large"
           color="primary"
           showFirstButton
           showLastButton
-          sx={{ '& ul': { justifyContent: 'center', marginTop: "4rem" } }} />
+          sx={{ "& ul": { justifyContent: "center", marginTop: "4rem" } }}
+        />
       </div>
 
       {/* Footer */}

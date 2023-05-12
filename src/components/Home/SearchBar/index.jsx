@@ -1,12 +1,12 @@
-import React from 'react';
-import './styles.css';
+import React from "react";
+import "./styles.css";
 
 const SearchBar = ({ formSubmit, value, handleSearchKey, clearSearch }) => (
-  <div className='searchBar-wrap'>
+  <div className="searchBar-wrap">
     <form onSubmit={formSubmit}>
       <input
-        type='text'
-        placeholder='Search By Category'
+        type="text"
+        placeholder="Search By Category"
         value={value}
         onChange={handleSearchKey}
       />
